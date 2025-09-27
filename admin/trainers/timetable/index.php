@@ -515,7 +515,7 @@ $conn->close();
                                                     <label for="color">Color</label>
                                                     <input type="color" class="form-control" id="color" name="color" value="#0950dc" required>
                                                 </div>
-                                                <button type="submit" class="btn btn-primary"><?php echo $translations["add"]; ?></button>
+                                                <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> <?php echo $translations["add"]; ?></button>
                                             </form>
                                         </div>
                                     </div>
@@ -533,7 +533,7 @@ $conn->close();
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
-                                                <button type="submit" class="btn btn-danger"><?php echo $translations["delete"]; ?></button>
+                                                <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> <?php echo $translations["delete"]; ?></button>
                                             </form>
                                         </div>
                                     </div>

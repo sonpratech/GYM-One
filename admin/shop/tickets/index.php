@@ -376,7 +376,7 @@ $conn->close();
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary mt-3" name="add_ticket"><?php echo $translations["ticketsandpassesadd"]; ?></button>
+                                        <button type="submit" class="btn btn-primary mt-3" name="add_ticket"><i class="bi bi-plus-circle"></i> <?php echo $translations["ticketsandpassesadd"]; ?></button>
                                     </form>
 
                                 </div>
@@ -420,7 +420,7 @@ $conn->close();
                                                         <td><?= $row['price'] ?></td>
                                                         <td><?= is_null($row['occasions']) ? '-' : $row['occasions'] ?></td>
                                                         <td>
-                                                            <a href="?delete=<?= $row['id'] ?>" class="btn btn-danger btn-sm"><?php echo $translations["delete"]; ?></a>
+                                                            <a href="?delete=<?= $row['id'] ?>" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i> <?php echo $translations["delete"]; ?></a>
                                                         </td>
                                                     </tr>
                                                 <?php endwhile; ?>

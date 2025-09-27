@@ -397,8 +397,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
                         <div class="mb-10">
-                            <button type="submit" class="btn btn-primary"><?php echo $translations["save"]; ?></button>
-                            <a href="../index.php" class="btn btn-secondary"><?php echo $translations["not-yet"]; ?></a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-down"></i> <?php echo $translations["save"]; ?></button>
+                            <a href="../index.php" class="btn btn-secondary"><i class="bi bi-box-arrow-left"></i> <?php echo $translations["not-yet"]; ?></a>
                         </div>
                     </form>
                 <?php endif; ?>

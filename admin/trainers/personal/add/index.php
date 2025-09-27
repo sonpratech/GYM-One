@@ -386,7 +386,7 @@ $conn->close();
                                             <label for="price_10sessions" class="form-label"><?php echo $translations["price"]; ?> (10 <?php echo $translations["occasions"]; ?>):</label>
                                             <input type="number" class="form-control" id="price_10sessions" name="price_10sessions">
                                         </div>
-                                        <button type="submit" class="btn btn-primary"><?php echo $translations["newtraineradd"]; ?></button>
+                                        <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> <?php echo $translations["newtraineradd"]; ?></button>
                                     </form>
                                 <?php
                                 } else {

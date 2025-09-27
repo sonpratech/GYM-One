@@ -935,7 +935,6 @@ if (!function_exists('curl_init')) {
                         $("#log-container").html(response.log);
                         $("#log-container").scrollTop($("#log-container")[0].scrollHeight);
 
-                        // Change button text to indicate completion and direction
                         $("#update-button").prop("disabled", false).html('<i class="fas fa-arrow-right me-2"></i> <?php echo $translations["gotomainpage"] ?? "Vissza a főoldalra"; ?>');
 
                         if (response.success) {

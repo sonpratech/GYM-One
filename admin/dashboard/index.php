@@ -1,4 +1,31 @@
 <?php
+
+$envPath = __DIR__ . '../../../.env';
+$key = 'AUTOACCEPT';
+$defaultValue = 'FALSE';
+
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+} else {
+    $lines = [];
+}
+
+$found = FALSE;
+foreach ($lines as $line) {
+    if (stripos(trim($line), $key . '=') === 0) {
+        $found = true;
+        break;
+    }
+}
+
+if (!$found) {
+    $lines[] = "$key=$defaultValue";
+    file_put_contents($envPath, implode(PHP_EOL, $lines) . PHP_EOL);
+}
+?>
+
+
+<?php
 session_start();
 
 if (!isset($_SESSION['adminuser'])) {
@@ -538,7 +565,7 @@ foreach ($data as $item) {
                             <div class="card-body">
                                 <h5 class="card-title mb-0 fw-semibold"><?php echo $translations["userlogginer"]; ?></h5>
                                 <div class="text-center">
-                                    <a data-toggle="modal" data-target="#Logginer_MODAL" class="btn btn-success">
+                                    <a data-toggle="modal" data-target="#Logginer_MODAL" class="btn mt-3 btn-success">
                                         <h4><?= $translations["logginer"]; ?></h4>
                                     </a>
                                 </div>
@@ -635,6 +662,54 @@ foreach ($data as $item) {
                                 <div class="progress">
                                     <div class="progress-bar-<?php echo $progresscolor; ?>" role="progressbar" style="width: <?php echo number_format($capacityPercent, 2); ?>%;" aria-valuenow="<?php echo number_format($capacityPercent, 2); ?>" aria-valuemin="0" aria-valuemax="100"><?php echo number_format($capacityPercent, 0); ?>%</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        :root {
+                            --main-color: #0950DC;
+                        }
+
+                        .support-card {
+                            border-color: var(--main-color);
+                            animation: pulse 2.5s infinite;
+                        }
+
+                        @keyframes pulse {
+                            0% {
+                                box-shadow: 0 0 10px rgba(9, 80, 220, 0.4);
+                            }
+
+                            50% {
+                                box-shadow: 0 0 20px rgba(9, 80, 220, 0.9);
+                            }
+
+                            100% {
+                                box-shadow: 0 0 10px rgba(9, 80, 220, 0.4);
+                            }
+                        }
+
+                        .btn-github {
+                            background-color: #24292e;
+                            color: white;
+                            border: none;
+                        }
+
+                        .btn-github:hover {
+                            background-color: #444c56;
+                        }
+                    </style>
+                    <div class="col-sm-4">
+                        <div class="card support-card">
+                            <div class="card-header">
+                                <h3 class="card-title"><strong>💙 <?= $translations["gymonesupport_header"]; ?></strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <p><?= $translations["gymonesupport_text_one"]; ?></p>
+                                <p><?= $translations["gymonesupport_text_two"]; ?></p>
+                                <a href="https://github.com/sponsors/mayerbalintdev" target="_blank" class="btn btn-github btn-lg">
+                                    💚 <?= $translations["sponsor-btn"]; ?>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -785,6 +860,77 @@ foreach ($data as $item) {
     <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script>
         $(document).ready(function() {
+            $(document).on("click", ".loginUser", function(e) {
+                e.preventDefault();
+
+                const userId = $(this).data("userid");
+
+                qrCodeContent.value = userId;
+                resultElement.textContent = `QR Code Result: ${userId}`;
+                continueButton.style.display = 'inline';
+                checkmark.style.display = 'none';
+                error.style.display = 'none';
+                video.classList.remove('scanned', 'error');
+
+                fetch('process.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `qrcode=${encodeURIComponent(userId)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            scanCompleted = true;
+                            userData = {
+                                firstname: data.firstname,
+                                lastname: data.lastname,
+                                birthdate: data.birthdate,
+                                ticket_status: data.ticket_status,
+                                remaining_opportunities: data.remaining_opportunities,
+                                expiredate: data.expiredate,
+                                assigned_locker: data.assigned_locker
+                            };
+
+                            resultElement.innerHTML = `${translations.firstname}: ${data.firstname}<br>${translations.lastname}: ${data.lastname}`;
+
+                            userDetails.innerHTML =
+                                `${translations.firstname}: ${userData.firstname}<br>
+                 ${translations.lastname}: ${userData.lastname}<br>
+                 ${translations.birthday}: ${userData.birthdate}<br>
+                 ${translations.ticketinfo} ${userData.ticket_status}`;
+
+                            if (userData.ticket_status === translations.valid
+                            ) {
+                                nextButton.disabled = false;
+                            } else {
+                                nextButton.disabled = true;
+                            }
+
+                            video.classList.add('scanned');
+                            checkmark.style.display = 'block';
+                            error.style.display = 'none';
+                            continueButton.style.display = 'inline';
+                        } else {
+                            resultElement.textContent = translations['qr-error'];
+                            video.classList.add('error');
+                            error.style.display = 'block';
+                            checkmark.style.display = 'none';
+                            continueButton.style.display = 'none';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Manual login error:', err);
+                        resultElement.textContent = translations['qr-error'];
+                        video.classList.add('error');
+                        error.style.display = 'block';
+                        checkmark.style.display = 'none';
+                        continueButton.style.display = 'none';
+                    });
+            });
+
+
             $("#search").on("input", function() {
                 var query = $(this).val();
                 if (query.length > 2) {
@@ -859,7 +1005,7 @@ foreach ($data as $item) {
                             ${translations.birthday}: ${userData.birthdate}<br>
                             ${translations.ticketinfo} ${userData.ticket_status}`;
 
-                                    if (userData.ticket_status === 'Érvényes') {
+                                    if (userData.ticket_status === translations.valid) {
                                         nextButton.disabled = false;
                                     } else {
                                         nextButton.disabled = true;
@@ -914,7 +1060,7 @@ foreach ($data as $item) {
             });
 
             $('#nextButton').on('click', function() {
-                if (userData.ticket_status === "Érvényes") {
+                if (userData.ticket_status === translations.valid) {
                     $('#UserDetails_MODAL').modal('hide');
                     $('#TicketDetails_MODAL').modal('show');
 

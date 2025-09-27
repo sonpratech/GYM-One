@@ -402,7 +402,7 @@ $conn->close();
                                 <td>
                                     <form method='post' style='display: inline;'>
                                         <input type='hidden' name='userid' value='{$row["userid"]}'>
-                                        <button type='submit' class='btn btn-danger btn-sm' name='delete_user'>{$translations["delete"]}</button>
+                                        <button type='submit' class='btn btn-danger btn-sm' name='delete_user'><i class='bi bi-person-x-fill'></i> {$translations["delete"]}</button>
                                     </form>
                                 </td>
                               </tr>";
@@ -457,7 +457,7 @@ $conn->close();
                                                         for="is_boss"><?php echo $translations["isboss-or-not"]; ?></label>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary"
-                                                    name="add_user"><?php echo $translations["register"]; ?></button>
+                                                    name="add_user"><i class="bi bi-box-arrow-in-right"></i> <?php echo $translations["register"]; ?></button>
                                             </form>
                                         <?php
                                         } else {

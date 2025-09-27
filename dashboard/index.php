@@ -73,7 +73,6 @@ while ($row = $result->fetch_assoc()) {
     $expireDate = new DateTime($row['expiredate']);
     $expireDate = $expireDate->format('Y-m-d'); // Csak az év-hónap-nap kell
 
-    // Ha a lejárati dátum egyenlő vagy nagyobb, mint a mai nap, akkor még érvényes
     if ($expireDate >= $currentDate) {
         $id = $row['id'];
         $ticketname = $row['ticketname'];
@@ -263,7 +262,7 @@ if (!file_exists($filename)) {
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title fw-semibold"><?php echo $translations["lastworkout"]; ?></h4>
-                                <h1><strong><?= $latest_training;?></strong></h1>
+                                <h1><strong><?= $latest_training; ?></strong></h1>
                             </div>
                         </div>
                     </div>
@@ -279,7 +278,7 @@ if (!file_exists($filename)) {
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title fw-semibold"><?php echo $translations["profilebalance"]; ?></h4>
-                                <h1><strong><?php echo $profile_balance;?></strong><?php echo $currency; ?></h1>
+                                <h1><strong><?php echo $profile_balance; ?></strong><?php echo $currency; ?></h1>
                             </div>
                         </div>
                     </div>
@@ -295,7 +294,11 @@ if (!file_exists($filename)) {
                                     echo "<h2 class='lead'>{$translations["qrgenerateing"]}</h2>";
                                 }
                                 ?>
-
+                                <a href="pkpass.php" target="_blank">
+                                    <img src="../assets/img/brand/wallet/<?php echo $lang_code; ?>_add_to_google_wallet_add-wallet-badge.png"
+                                        alt="<?= $lang_code; ?>_add_to_google_wallet_add-wallet-badge"
+                                        class="img img-fluid mt-2 google-wallet">
+                                </a>
                             </div>
                         </div>
                     </div>

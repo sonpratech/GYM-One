@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "883401fc2962f5fe9d96bf1d7350ea49",
+    "content-hash": "a53e1d8e00feeb228e76cfdf600ba870",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -657,6 +657,69 @@
                 "source": "https://github.com/paragonie/random_compat"
             },
             "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "pkpass/pkpass",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tschoffelen/php-pkpass.git",
+                "reference": "79ac33102ce6d5d69bfb97454f1490f37c4e2942"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tschoffelen/php-pkpass/zipball/79ac33102ce6d5d69bfb97454f1490f37c4e2942",
+                "reference": "79ac33102ce6d5d69bfb97454f1490f37c4e2942",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "ext-zip": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PKPass\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Schoffelen",
+                    "email": "thomas@includable.com",
+                    "homepage": "https://schof.co/"
+                }
+            ],
+            "description": "PHP PKPass class for iOS Wallet",
+            "homepage": "https://github.com/includable/php-pkpass",
+            "keywords": [
+                "apple",
+                "ios",
+                "ipad",
+                "iphone",
+                "passbook",
+                "php",
+                "wallet"
+            ],
+            "support": {
+                "issues": "https://github.com/tschoffelen/php-pkpass/issues",
+                "source": "https://github.com/tschoffelen/php-pkpass/tree/v2.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tschoffelen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-06-16T16:10:17+00:00"
         },
         {
             "name": "psr/http-message",

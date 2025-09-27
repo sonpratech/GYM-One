@@ -383,7 +383,7 @@ $conn->close();
                                                 <option value="Female"><?php echo $translations["girl"]; ?></option>
                                             </select>
                                         </div>
-                                        <button type="submit" name="add" class="btn btn-primary mt-5"><?php echo $translations["add"]; ?></button>
+                                        <button type="submit" name="add" class="btn btn-primary mt-5"><i class="bi bi-plus-circle"></i> <?php echo $translations["add"]; ?></button>
                                     </form>
 
                                     <table class="mt-4 table table-bordered">
@@ -409,7 +409,7 @@ $conn->close();
                                                     }
                                                     echo "</td>
             <td>
-                <a href='?delete={$row['id']}' class='btn btn-danger btn-sm'>{$translations["delete"]}</a>
+                <a href='?delete={$row['id']}' class='btn btn-danger btn-sm'><i class='bi bi-x-circle'></i> {$translations["delete"]}</a>
             </td>
         </tr>";
                                                 }

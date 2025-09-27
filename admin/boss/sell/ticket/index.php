@@ -332,7 +332,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                                         <p class="card-text"><?php echo $translations["expiredate"]; ?> <?php echo $row['expire_days'] ? htmlspecialchars($row['expire_days']) . " " . $translations["day"] . "" : "" . $translations["unlimited"] . ""; ?></p>
                                         <p class="card-text"><?php echo $translations["tickettableoccassion"]; ?>: <?php echo $row['occasions'] ? htmlspecialchars($row['occasions']) : "Nincs megadva"; ?></p>
                                         <p class="card-text"><?php echo $translations["price"]; ?>: <?php echo htmlspecialchars($row['price']); ?> <?php echo $currency; ?></p>
-                                        <a href="../payment/?userid=<?php echo $ticketbuyerid; ?>&ticketid=<?php echo $row['id']; ?>" class="btn btn-primary"><?php echo $translations["choose"]; ?></a>
+                                        <a href="../payment/?userid=<?php echo $ticketbuyerid; ?>&ticketid=<?php echo $row['id']; ?>" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> <?php echo $translations["choose"]; ?></a>
                                     </div>
                                 </div>
                             </div>
@@ -356,7 +356,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                                     </div>
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $ticketbuyerid; ?>">
 
-                                    <button type="submit" class="btn btn-primary"><?php echo $translations["add"]; ?></button>
+                                    <button type="submit" class="btn btn-primary"><i class="bi bi-wallet2"></i> <?php echo $translations["add"]; ?></button>
                                 </form>
 
                                 <p class="card-text mt-3">
@@ -400,7 +400,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                             </div>
                             <div class="col-sm-12 text-center">
                                 <input type="hidden" id="userid" name="userid" value="<?php echo $ticketbuyerid; ?>">
-                                <button type="submit" class="btn btn-success"><?= $translations["next"]; ?></button>
+                                <button type="submit" class="btn btn-success"><i class="bi bi-box-arrow-in-right"></i> <?= $translations["next"]; ?></button>
                             </div>
                         </form>
                     <?php else: ?>

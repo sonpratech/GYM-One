@@ -417,7 +417,7 @@ $conn->close();
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn mt-5 btn-primary"><?php echo $translations["traineredit"]; ?></button>
+                                        <button type="submit" class="btn mt-5 btn-primary"><i class="bi bi-pencil-square"></i> <?php echo $translations["traineredit"]; ?></button>
                                     </form>
                                 <?php
                                 } else {

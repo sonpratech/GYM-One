@@ -130,7 +130,7 @@ $result = $conn->query($sql);
         .search-form .form-group {
             margin-bottom: 15px;
         }
-        
+
         @media (max-width: 768px) {
             .search-form .btn {
                 width: 100%;
@@ -357,12 +357,12 @@ $result = $conn->query($sql);
                                     </div>
                                     <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-block"><?php echo $translations["search"]; ?></button>
+                                            <button type="submit" class="btn btn-primary btn-block"><i class="bi bi-search"></i> <?php echo $translations["search"]; ?></button>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <a href="index.php" class="btn btn-success btn-block"><?php echo $translations["resetbtn"]; ?></a>
+                                            <a href="index.php" class="btn btn-success btn-block"><i class="bi bi-arrow-clockwise"></i> <?php echo $translations["resetbtn"]; ?></a>
                                         </div>
                                     </div>
                                 </div>
@@ -375,13 +375,15 @@ $result = $conn->query($sql);
                                             <th><?php echo $translations["firstname"]; ?></th>
                                             <th><?php echo $translations["lastname"]; ?></th>
                                             <th><?php echo $translations["email"]; ?></th>
-                                            <th></th>
+                                            <th><?php echo $translations["expiredate"]; ?></th>
+                                            <th><?php echo $translations["action"]; ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) {
+
                                                 echo "<tr>";
                                                 echo "<td>" . $row["firstname"] . "</td>";
                                                 echo "<td>" . $row["lastname"] . "</td>";
@@ -390,16 +392,48 @@ $result = $conn->query($sql);
                                                     echo " <span class='text-danger bi bi-exclamation-triangle-fill' data-bs-toggle='tooltip' title='" . $translations["waitingconfirm"] . "'></span>";
                                                 }
                                                 echo "</td>";
-                                                echo '<td><a class="btn btn-primary" href="edit/?user=' . $row["userid"] . '">' . $translations["profilesee"] . '</a></td>';
+
+                                                $userid = $row["userid"];
+                                                $ticket_sql = "SELECT expiredate FROM current_tickets WHERE userid = '$userid' ORDER BY expiredate DESC LIMIT 1";
+                                                $ticket_result = $conn->query($ticket_sql);
+
+                                                if ($ticket_result->num_rows > 0) {
+                                                    $ticket = $ticket_result->fetch_assoc();
+                                                    $expiredate = $ticket["expiredate"];
+
+                                                    $today = new DateTime();
+                                                    $expire = new DateTime($expiredate);
+
+                                                    $expire->modify('+1 day');
+
+                                                    $originalExpire = new DateTime($expiredate);
+
+                                                    $diff = $today->diff($expire)->days;
+
+                                                    if ($expire > $today) {
+                                                        if ($originalExpire->format("Y-m-d") === $today->format("Y-m-d")) {
+                                                            $diff = 1;
+                                                        }
+                                                        echo "<td class='text-success'>$diff " . $translations["day"] . "</td>";
+                                                    } else {
+                                                        echo "<td class='text-danger'>" . $translations["expired"] . " (" . $originalExpire->format("Y-m-d") . ")</td>";
+                                                    }
+                                                } else {
+                                                    echo "<td class='text-muted'>" . $translations["youdonthaveticket"] . "</td>";
+                                                }
+
+
+                                                echo '<td><a class="btn btn-primary" href="edit/?user=' . $row["userid"] . '"><i class="bi bi-box-arrow-in-right"></i> ' . $translations["profilesee"] . '</a></td>';
                                                 echo "</tr>";
                                             }
                                         } else {
-                                            echo "<tr><td colspan='4'>No user data!</td></tr>";
+                                            echo "<tr><td colspan='5'>No user data!</td></tr>";
                                         }
                                         ?>
                                     </tbody>
                                 </table>
                             </div>
+
 
                             <?php
                             $sql = "SELECT COUNT(*) AS total FROM users";

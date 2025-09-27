@@ -339,7 +339,7 @@ $result = $conn->query($sql);
                             <form method="GET" class="mb-4">
                                 <div class="input-group">
                                     <input type="text" name="search" class="form-control mt-3" placeholder="<?php echo $translations["searchbyproductname"]; ?>" value="<?php echo htmlspecialchars($search); ?>">
-                                    <button class="btn btn-primary mt-3" type="submit"><i class="bi bi-search"></i><?php echo $translations["search"]; ?>
+                                    <button class="btn btn-primary mt-3" type="submit"><i class="bi bi-search"></i> <?php echo $translations["search"]; ?>
                                     </button>
                                 </div>
                             </form>
@@ -347,12 +347,12 @@ $result = $conn->query($sql);
                     </div>
                     <div class="col-sm-4 text-center">
                         <div class="card shadow">
-                            <a href="add/" class="btn btn-lg btn-success"><?php echo $translations["addpackage"]; ?></a>
+                            <a href="add/" class="btn btn-lg btn-success"><i class="bi bi-box-seam"></i> <?php echo $translations["addpackage"]; ?></a>
                         </div>
                     </div>
                     <div class="col-sm-4 text-center">
                         <div class="card shadow">
-                            <a href="inventory/" class="btn btn-lg btn-info"><?php echo $translations["werhousecorrection"]; ?>
+                            <a href="inventory/" class="btn btn-lg btn-info"><i class="bi bi-clipboard-check"></i> <?php echo $translations["werhousecorrection"]; ?>
                                 <?php if ($low_stock_count > 0): ?>
                                     <span class="badge badge-warning"><?php echo $low_stock_count; ?></span>
                                 <?php endif; ?></a>
@@ -374,7 +374,7 @@ $result = $conn->query($sql);
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <p class="text-center">Nincs találat.</p>
+                        <p class="text-center"><?php echo $translations["nopackages"];?></p>
                     <?php endif; ?>
                 </div>
 

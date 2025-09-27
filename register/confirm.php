@@ -73,7 +73,7 @@ if ($conn->connect_error) {
     <title><?php echo $business_name; ?> - <?php echo $translations["register"]; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../assets/css/default.css">
+    <link rel="stylesheet" href="../assets/css/confirm.css">
     <link rel="shortcut icon" href="../assets/img/brand/favicon.png" type="image/x-icon">
     <meta name="title" content="<?php echo $business_name; ?> - <?php echo $translations["register"]; ?>">
     <meta name="description" content="<?php echo $description; ?>">
@@ -97,11 +97,15 @@ if ($conn->connect_error) {
 </script>
 
 <body>
-    <div class="container-fluid">
-        <div class="row mt-5 justify-content-center">
-            <div class="col-10 col-md-6 text-center">
-                <img src="../assets/img/brand/logo.png" width="200px" alt="<?php echo $business_name; ?>">
-                <h2 class="mt-5" id="bussinessnameh2"><?php echo $business_name; ?> - <?php echo $translations["confirmemailpage"];?></h2>
+    <div class="main-container">
+        <div class="content-wrapper">
+            <div class="confirmation-card">
+                <div class="logo-section">
+                    <img src="../assets/img/brand/logo.png" width="150px" alt="<?php echo $business_name;?>">
+                </div>
+
+                <h4 class="page-title"><?php echo $business_name;?> - <?php echo $translations["confirmemailpage"];?></h4>
+
                 <?php
                 if (isset($_GET['userid'])) {
                     $userid = $_GET['userid'];
@@ -111,48 +115,69 @@ if ($conn->connect_error) {
                     $stmt->bind_param("i", $userid);
 
                     if ($stmt->execute()) {
-                        echo '<div class="alert alert-success mt-5" role="alert">'. $translations["regconfirm"] .'</div>';
+                        echo '<div class="status-message alert-success" role="alert">';
+                        echo '<div class="status-icon success-icon">';
+                        echo '<i class="bi bi-check-circle-fill"></i>';
+                        echo '</div>';
+                        echo '<h4 class="text-light mb-2">' . $translations["regconfirm"] . '</h4>';
+                        echo '</div>';
                     } else {
-                        echo '<div class="alert alert-danger mt-5" role="alert">' . $translations["errorconfirm"] . $conn->error . '</div>';
+                        echo '<div class="status-message alert-danger" role="alert">';
+                        echo '<div class="status-icon error-icon">';
+                        echo '<i class="bi bi-x-circle-fill"></i>';
+                        echo '</div>';
+                        echo '<p class="text-light mb-0">' . $translations["errorconfirm"] . $conn->error . '</p>';
+                        echo '</div>';
                     }
 
                     $stmt->close();
                 } else {
-                    echo '<div class="alert alert-warning mt-5" role="alert">' . $translations["errornoparameter"]. '</div>';
+                    echo '<div class="status-message alert-warning" role="alert">';
+                    echo '<div class="status-icon warning-icon">';
+                    echo '<i class="bi bi-exclamation-triangle-fill"></i>';
+                    echo '</div>';
+                    echo '<p class="text-light mb-0">' . $translations["errornoparameter"] . '</p>';
+                    echo '</div>';
                 }
 
                 $conn->close();
                 ?>
+
+                <a href="../" class="action-button">
+                    <i class="bi bi-house-door-fill"></i>
+                    <?php echo $translations["backtothehomepage"];?>
+                </a>
             </div>
         </div>
-    </div>
-    <div class="footer">
-        <div class="container">
-            <div class="row gy-4">
-                <div class="col-md-4 mb-1">
 
-                    <p><?php echo $country; ?>, <?php echo $city; ?></p>
-                    <p><?php echo $street; ?> <?php echo $hause_no; ?></p>
+        <div class="footer">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-md-4 mb-1">
+
+                        <p><?php echo $country; ?>, <?php echo $city; ?></p>
+                        <p><?php echo $street; ?> <?php echo $hause_no; ?></p>
+                    </div>
+                    <div class="col-md-3 offset-md-1">
+                        <h2 class="text-light mb-4"></h2>
+                    </div>
+
+                    <div class="col-md-2 offset-md-1">
+                        <h5 class="text-light mb-4"></h5>
+
+                    </div>
                 </div>
-                <div class="col-md-3 offset-md-1">
-                    <h2 class="text-light mb-4"></h2>
+
+                <div class="border-top border-secondary pt-3 mt-3">
+                    <p class="small text-center mb-0">
+                        Copyright © <?php echo $copyright_year; ?> <?php echo $business_name; ?> - <?php echo $translations["copyright"]; ?>
+                        &nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314">
+                            </path>
+                        </svg>
+                        <a href="https://www.gymoneglobal.com/?lang=<?php echo $lang_code; ?>">GYM One</a>
+                    </p>
                 </div>
-
-                <div class="col-md-2 offset-md-1">
-                    <h5 class="text-light mb-4"></h5>
-
-                </div>
-            </div>
-
-            <div class="border-top border-secondary pt-3 mt-3">
-                <p class="small text-center mb-0">
-                    Copyright © <?php echo $copyright_year; ?> <?php echo $business_name; ?> - <?php echo $translations["copyright"]; ?>
-                    &nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314">
-                        </path>
-                    </svg>
-                    <a href="https://www.gymoneglobal.com/?lang=<?php echo $lang_code; ?>">GYM One</a>
-                </p>
             </div>
         </div>
     </div>

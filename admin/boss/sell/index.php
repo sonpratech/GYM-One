@@ -321,7 +321,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                                         <label for="search"><?= $translations["search"]; ?>:</label>
                                         <input type="text" id="search" name="search" class="form-control" value="<?php echo htmlspecialchars($search); ?>">
                                     </div>
-                                    <button type="submit" class="btn btn-primary"><?= $translations["search"]; ?></button>
+                                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> <?= $translations["search"]; ?></button>
                                 </form>
                             </div>
                         </div>
@@ -346,7 +346,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                                                         <td><?php echo htmlspecialchars($row["userid"]); ?></td>
                                                         <td><?php echo htmlspecialchars($row["firstname"]); ?></td>
                                                         <td><?php echo htmlspecialchars($row["lastname"]); ?></td>
-                                                        <td><a href='ticket/?userid=<?php echo htmlspecialchars($row["userid"]); ?>' class="btn btn-primary"><?= $translations["next"]; ?></a></td>
+                                                        <td><a href='ticket/?userid=<?php echo htmlspecialchars($row["userid"]); ?>' class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> <?= $translations["next"]; ?></a></td>
                                                     </tr>
                                                 <?php endwhile; ?>
                                             </tbody>

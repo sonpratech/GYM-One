@@ -82,13 +82,14 @@ $offset = ($page - 1) * $limit;
 
 $sql = "SELECT logs.id, workers.username as username, logs.action, logs.actioncolor, logs.time 
         FROM logs 
-        JOIN workers ON logs.userid = workers.userid 
+        LEFT JOIN workers ON logs.userid = workers.userid 
         ORDER BY logs.time DESC
         LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $limit, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
+
 
 if (isset($_POST['delete_old_logs'])) {
     $date_limit = date('Y-m-d', strtotime('-15 days'));
@@ -111,7 +112,6 @@ if (isset($_POST['delete_old_logs'])) {
     }
 }
 
-// Get total number of logs for pagination
 $total_sql = "SELECT COUNT(*) as total FROM logs";
 $total_result = $conn->query($total_sql);
 $total_row = $total_result->fetch_assoc();
@@ -373,9 +373,10 @@ $conn->close();
                                             <?php
                                             if ($result->num_rows > 0) {
                                                 while ($row = $result->fetch_assoc()) {
+                                                    $username = $row['username'] ?? $translations["log_user_system"];
                                                     echo "<tr>";
                                                     echo "<td><b>" . htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8') . "</b></td>";
-                                                    echo "<td>" . htmlspecialchars($row['username'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                                    echo "<td>" . htmlspecialchars($username, ENT_QUOTES, 'UTF-8') . "</td>";
                                                     echo "<td class='text-" . htmlspecialchars($row['actioncolor'], ENT_QUOTES, 'UTF-8') . "'><p>" . htmlspecialchars($row['action'], ENT_QUOTES, 'UTF-8') . "</p></td>";
                                                     echo "<td>" . htmlspecialchars($row['time'], ENT_QUOTES, 'UTF-8') . "</td>";
                                                     echo "</tr>";

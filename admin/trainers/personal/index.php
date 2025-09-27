@@ -408,7 +408,7 @@ $conn->close();
                     <div class="col-md-2">
                         <div class="card shadow">
                             <div class="card-body">
-                                <a href="add/" class="btn btn-success btn-lg"><?php echo $translations["newtraineradd"]; ?></a>
+                                <a href="add/" class="btn btn-success btn-lg"><i class="bi bi-plus-circle"></i> <?php echo $translations["newtraineradd"]; ?></a>
                             </div>
                         </div>
                     </div>
@@ -424,14 +424,14 @@ $conn->close();
                                             <?php while ($row = $result->fetch_assoc()): ?>
                                                 <div class="col-md-3">
                                                     <div class="card mb-4 text-center">
-                                                        <img src="<?php echo '../../../assets/img/trainers/trainer_' . $row['id'] . '.png'; ?>" class="card-img-top img-fluid" alt="<?php echo $row['name']; ?>" style="height: 200px; object-fit: cover;">
+                                                        <img src="<?php echo '../../../assets/img/trainers/trainer_' . $row['id'] . '.png'; ?>" class="card-img-top img-fluid" alt="<?php echo $row['name']; ?>">
                                                         <div class="card-body">
                                                             <h5 class="card-title"><?php echo $row['name']; ?></h5>
                                                             <p class="card-text"><?php echo nl2br($row['description']); ?></p>
                                                             <p class="card-text"><strong><?php echo $translations["price"]; ?> (1 <?php echo $translations["hour"]; ?>):</strong> <?php echo $row['price_1hour']; ?> <?php echo $currency; ?></p>
                                                             <p class="card-text"><strong><?php echo $translations["price"]; ?> (10 <?php echo $translations["occasions"]; ?>):</strong> <?php echo $row['price_10sessions']; ?> <?php echo $currency; ?></p>
-                                                            <a href="edit/?id=<?php echo $row['id']; ?>" class="btn btn-primary"><?php echo $translations["editbtn"]; ?></a>
-                                                            <a href="delete/?id=<?php echo $row['id']; ?>" class="btn btn-danger"><?php echo $translations["delete"]; ?></a>
+                                                            <a href="edit/?id=<?php echo $row['id']; ?>" class="btn btn-primary"><i class="bi bi-pencil-square"></i> <?php echo $translations["editbtn"]; ?></a>
+                                                            <a href="delete/?id=<?php echo $row['id']; ?>" class="btn btn-danger"><i class="bi bi-x-circle"></i> <?php echo $translations["delete"]; ?></a>
                                                         </div>
                                                     </div>
                                                 </div>

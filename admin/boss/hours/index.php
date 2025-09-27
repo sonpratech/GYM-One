@@ -395,7 +395,7 @@ $conn->close();
                                                 <?php endforeach; ?>
                                             </tbody>
                                         </table>
-                                        <button type="submit" class="btn btn-primary"><?= $translations["save"]; ?></button>
+                                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <?= $translations["save"]; ?></button>
 
                                     </form>
                                 <?php

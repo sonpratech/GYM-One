@@ -32,6 +32,7 @@ class ComposerStaticInit247ff7feeaf560b79120d08b84c93d29
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+            'PKPass\\' => 7,
         ),
         'M' => 
         array (
@@ -85,6 +86,10 @@ class ComposerStaticInit247ff7feeaf560b79120d08b84c93d29
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'PKPass\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/pkpass/pkpass/src',
         ),
         'Mpdf\\PsrLogAwareTrait\\' => 
         array (

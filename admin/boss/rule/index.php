@@ -351,7 +351,7 @@ $initial_content = file_get_contents('rule.html');
                                     <div class="form-group">
                                         <textarea id="editor" name="content"><?php echo htmlspecialchars($initial_content); ?></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary"><?php echo $translations["save"]; ?></button>
+                                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <?php echo $translations["save"]; ?></button>
                                 </form>
 
                             </div>

@@ -128,6 +128,7 @@ $domain_url = $protocol . $host;
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['userid'])) {
   if (isset($_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword'])) {
     $userid = $_SESSION['userid'];
+    $change_date = date("Y-m-d H:i:s");
     $currentPassword = $_POST['currentPassword'];
     $newPassword = $_POST['newPassword'];
     $confirmPassword = $_POST['confirmPassword'];
@@ -157,6 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['userid'])) {
         $updateStmt = $conn->prepare($updateSql);
         $updateStmt->bind_param("si", $newHashedPassword, $userid);
 
+        $PasswordEmailHeaderTwo_PLACEHOLDER = str_replace("{business_name}", $business_name, $translations["passwordemailheadertwo"]);
+
+        $replacements = [
+          "{business_name}" => $business_name,
+          "{user_email}" => $mail
+        ];
+        $PasswordEmailWhy_PLACEHOLDER = strtr($translations["passwordemailwhy"], $replacements);
+
         if ($updateStmt->execute()) {
           $alerts_html .= '<div class="alert alert-success" role="alert">
                                     ' . $translations["success-new-password"] . '
@@ -168,227 +177,107 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['userid'])) {
           $mailer = new Swift_Mailer($transport);
 
           $editedcontent = <<<EOD
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-  <!--[if !mso]><!-->
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  <!--<![endif]-->
-  <!--[if (gte mso 9)|(IE)]>
-  <xml>
-    <o:OfficeDocumentSettings>
-      <o:AllowPNG/>
-      <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentSettings>
-  </xml>
-  <![endif]-->
-  <!--[if (gte mso 9)|(IE)]>
-<style type="text/css">
-body {width: 600px;margin: 0 auto;}
-table {border-collapse: collapse;}
-table, td {mso-table-lspace: 0pt;mso-table-rspace: 0pt;}
-img {-ms-interpolation-mode: bicubic;}
-</style>
-<![endif]-->
-  <style type="text/css">
-body, p, div {
-  font-family: arial,helvetica,sans-serif;
-  font-size: 14px;
-}
-body {
-  color: #000000;
-}
-body a {
-  color: #1188E6;
-  text-decoration: none;
-}
-p { margin: 0; padding: 0; }
-table.wrapper {
-  width:100% !important;
-  table-layout: fixed;
-  -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-}
-img.max-width {
-  max-width: 100% !important;
-}
-.column.of-2 {
-  width: 50%;
-}
-.column.of-3 {
-  width: 33.333%;
-}
-.column.of-4 {
-  width: 25%;
-}
-ul ul ul ul  {
-  list-style-type: disc !important;
-}
-ol ol {
-  list-style-type: lower-roman !important;
-}
-ol ol ol {
-  list-style-type: lower-latin !important;
-}
-ol ol ol ol {
-  list-style-type: decimal !important;
-}
-@media screen and (max-width:480px) {
-  .preheader .rightColumnContent,
-  .footer .rightColumnContent {
-    text-align: left !important;
-  }
-  .preheader .rightColumnContent div,
-  .preheader .rightColumnContent span,
-  .footer .rightColumnContent div,
-  .footer .rightColumnContent span {
-    text-align: left !important;
-  }
-  .preheader .rightColumnContent,
-  .preheader .leftColumnContent {
-    font-size: 80% !important;
-    padding: 5px 0;
-  }
-  table.wrapper-mobile {
-    width: 100% !important;
-    table-layout: fixed;
-  }
-  img.max-width {
-    height: auto !important;
-    max-width: 100% !important;
-  }
-  a.bulletproof-button {
-    display: block !important;
-    width: auto !important;
-    font-size: 80%;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  .columns {
-    width: 100% !important;
-  }
-  .column {
-    display: block !important;
-    width: 100% !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  .social-icon-column {
-    display: inline-block !important;
-  }
-}
-</style>
-  <!--user entered Head Start--><!--End Head user entered-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+    Recommended preheader: Your password was successfully changed on {{change_date}}. If this wasn't you, secure your account immediately.
+    -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background-color: #f8f9fa; }
+        .email-container { max-width: 680px; margin: 0 auto; background: white; }
+        .header { padding: 40px 30px 20px; text-align: center; }
+        .logo { max-width: 200px; height: auto; }
+        .content { padding: 0 30px 30px; }
+        .success-badge { background: #ECFDF5; color: #059669; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 20px; }
+        .hero-title { color: #222; font-size: 24px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .subtitle { color: #6B7280; font-size: 16px; text-align: center; margin-bottom: 32px; }
+        .user-info { background: #f8f9fa; padding: 16px; border-radius: 8px; margin: 20px 0; }
+        .user-email { color: #222; font-weight: 600; margin-bottom: 8px; }
+        .change-date { color: #6B7280; font-size: 14px; }
+        .security-alert { background: #FEF3C7; border: 1px solid #F59E0B; padding: 20px; border-radius: 8px; margin: 24px 0; }
+        .alert-title { color: #92400E; font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+        .alert-text { color: #92400E; font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+        .cta-button { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #0950DC, #0742B8); 
+            color: white; 
+            text-decoration: none; 
+            padding: 14px 28px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 14px; 
+            text-align: center; 
+            box-shadow: 0 4px 12px rgba(9, 80, 220, 0.3);
+        }
+        .tips-section { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 32px 0; }
+        .tips-title { color: #222222; font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .tip-item { color: #6B7280; margin-bottom: 8px; padding-left: 20px; position: relative; font-size: 14px; }
+        .tip-item:before { content: "•"; color: #0950DC; font-weight: bold; position: absolute; left: 0; }
+        .confirmation-text { background: #ECFDF5; border: 1px solid #10B981; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .confirmation-message { color: #059669; font-weight: 600; }
+        .footer { background: #f8f9fa; padding: 24px 30px; text-align: center; color: #6B7280; font-size: 12px; }
+        .footer a { color: #0950DC; text-decoration: none; }
+    </style>
 </head>
 <body>
-  <center class="wrapper" data-link-color="#1188E6" data-body-style="font-size:14px; font-family:arial,helvetica,sans-serif; color:#000000; background-color:#FFFFFF;">
-    <div class="webkit">
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" class="wrapper" bgcolor="#FFFFFF">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
         <tr>
-          <td valign="top" bgcolor="#FFFFFF" width="100%">
-            <table width="100%" role="content-container" class="outer" align="center" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td width="100%">
-                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td>
-                        <!--[if mso]>
-<center>
-<table><tr><td width="600">
-<![endif]-->
-                                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px;" align="center">
-                                  <tr>
-                                    <td role="modules-container" style="padding:0px 0px 0px 0px; color:#000000; text-align:left;" bgcolor="#FFFFFF" width="100%" align="left"><table class="module preheader preheader-hide" role="module" data-type="preheader" border="0" cellpadding="0" cellspacing="0" width="100%" style="display: none !important; mso-hide: all; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">
-<tr>
-  <td role="module-content">
-    <p></p>
-  </td>
-</tr>
-</table><table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" role="module" data-type="columns" style="padding:0px 0px 0px 0px;" bgcolor="#FFFFFF" data-distribution="1">
-<tbody>
-  <tr role="module-content">
-    <td height="100%" valign="top"><table width="580" style="width:580px; border-spacing:0; border-collapse:collapse; margin:0px 10px 0px 10px;" cellpadding="0" cellspacing="0" align="left" border="0" bgcolor="" class="column column-0">
-  <tbody>
-    <tr>
-      <td style="padding:0px;margin:0px;border-spacing:0;"><table class="wrapper" role="module" data-type="image" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="dae5891b-ceee-40f7-9315-02ea0b72592e">
-<tbody>
-  <tr>
-    <td style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;" valign="top" align="center">
-      <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:20% !important; width:20%; height:auto !important;" width="116" alt="" data-proportionally-constrained="true" data-responsive="true" src="{$domain_url}/assets/img/brand/logo.png">
-    </td>
-  </tr>
-</tbody>
-</table></td>
-    </tr>
-  </tbody>
-</table></td>
-  </tr>
-</tbody>
-</table><table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" role="module" data-type="columns" style="padding:10px 0px 10px 0px;" bgcolor="#FFFFFF" data-distribution="1">
-<tbody>
-  <tr role="module-content">
-    <td height="100%" valign="top"><table width="580" style="width:580px; border-spacing:0; border-collapse:collapse; margin:0px 10px 0px 10px;" cellpadding="0" cellspacing="0" align="left" border="0" bgcolor="" class="column column-0">
-  <tbody>
-    <tr>
-      <td style="padding:0px;margin:0px;border-spacing:0;"><table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="c09ad11e-b6f0-426b-bfb5-e854fb1d6b4e">
-<tbody>
-  <tr>
-    <td style="padding:18px 0px 18px 0px; line-height:30px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content"><div><h2 style="text-align: center">{$business_name}</h2>
-<div style="font-family: inherit; text-align: center">{$translations["editedpasswordbody"]}</div><div></div></div></td>
-  </tr>
-</tbody>
-</table><table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" role="module" data-type="columns" style="padding:0px 0px 0px 0px;" bgcolor="#252525" data-distribution="1">
-<tbody>
-  <tr role="module-content">
-    <td height="100%" valign="top"><table width="580" style="width:580px; border-spacing:0; border-collapse:collapse; margin:0px 10px 0px 10px;" cellpadding="0" cellspacing="0" align="left" border="0" bgcolor="" class="column column-0">
-  <tbody>
-    <tr>
-      <td style="padding:0px;margin:0px;border-spacing:0;"><table class="wrapper" role="module" data-type="image" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="70667641-28f8-4e30-850f-c1783cac6e0b">
-<tbody>
-  <tr>
-    <td style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;" valign="top" align="center">
-      <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:10% !important; width:10%; height:auto !important;" width="58" alt="" data-proportionally-constrained="true" data-responsive="true" src="https://gymoneglobal.com/assets/img/text-color-logo.png">
-    </td>
-  </tr>
-</tbody>
-</table></td>
-    </tr>
-  </tbody>
-</table></td>
-  </tr>
-</tbody>
-</table><div data-role="module-unsubscribe" class="module" role="module" data-type="unsubscribe" style="background-color:#252525; color:#444444; font-size:12px; line-height:20px; padding:0px 0px 0px 0px; text-align:Center;" data-muid="4e838cf3-9892-4a6d-94d6-170e474d21e5"><div class="Unsubscribe--addressLine"></div><p style="font-size:12px; line-height:20px;"><a class="Unsubscribe--unsubscribeLink" href="https://gymoneglobal.com/" target="_blank" style="">Gymoneglobal.com</a></p></div></td>
-                                  </tr>
-                                </table>
-                                <!--[if mso]>
-                              </td>
-                            </tr>
-                          </table>
-                        </center>
-                        <![endif]-->
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
+            <td>
+                <div class="email-container">
+                    <div class="header">
+                        <img src="{$domain_url}/assets/img/brand/logo.png" alt="GYM Logo" class="logo">
+                    </div>
+                    <div class="content">
+                        <div style="text-align: center;">
+                            <span class="success-badge">✓ {$translations["passwordemailbadge"]}</span>
+                        </div>
+                        <h1 class="hero-title">{$translations["passwordemailheaderone"]}</h1>
+                        <p class="subtitle">{$PasswordEmailHeaderTwo_PLACEHOLDER}</p>
+                        
+                        <div class="user-info">
+                            <div class="user-email">{$translations["passwordemailaccount"]}: {$mail}</div>
+                            <div class="change-date">{$translations["passwordemailchangedate"]} {$change_date}</div>
+                        </div>
+                        
+                        <div class="confirmation-text">
+                            <div class="confirmation-message">{$translations["passwordemailconfirmation"]}</div>
+                        </div>
+                        
+                        <div class="security-alert">
+                            <div class="alert-title">⚠️ {$translations["passwordemaildidntchange"]}</div>
+                            <p class="alert-text">
+                              {$translations["passwordemailalert"]}
+                            </p>
+                        </div>
+                        <div class="tips-section">
+                            <h2 class="tips-title">{$translations["passwordemailtipheader"]}</h2>
+                            <div class="tip-item">{$translations["passwordemailtipone"]}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>{$PasswordEmailWhy_PLACEHOLDER}</p>
+                        <p style="font-size:10px; color:#D1D5DB; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <span>⚡</span>
+                            <span>Engineered with <span style="color:#ef4444;">♥</span> by <a href="https://gymoneglobal.com" style="color:#0950DC;">GYM One</a></span>
+                            <span>⚡</span>
+                        </p>
+                    </div>
+                </div>
+            </td>
         </tr>
-      </table>
-    </div>
-  </center>
+    </table>
 </body>
 </html>
 EOD;
 
+
           $message = (new Swift_Message($translations["passwordedited"]))
-            ->setFrom(["{$smtp_username}" => "{$business_name} - {$translations['passwordedited']}"])
+            ->setFrom(["{$smtp_username}" => "$PasswordEmailHeaderTwo_PLACEHOLDER"])
             ->setTo([$mail => '{$firstname}'])
             ->setBody($editedcontent, 'text/html');
 
@@ -538,7 +427,7 @@ $conn->close();
                     <?php endif; ?>
 
                   </div>
-                  <button type="submit" class="btn btn-primary"><?php echo $translations["upload"]; ?></button>
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <?php echo $translations["upload"]; ?></button>
                 </form>
               </div>
             </div>
@@ -569,7 +458,7 @@ $conn->close();
                       </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary"><?php echo $translations["save"]; ?></button>
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <?php echo $translations["save"]; ?></button>
                 </form>
 
               </div>
@@ -595,14 +484,14 @@ $conn->close();
                       </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary w-100"><?php echo $translations["save"]; ?></button>
+                  <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save"></i> <?php echo $translations["save"]; ?></button>
                 </form>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#DeleteModal">
-                  <i class="bi bi-x-lg"></i> Fiók végleges törlése</button>
+                  <i class="bi bi-x-lg"></i> <?php echo $translations["deleteuser"]; ?></button>
               </div>
             </div>
           </div>

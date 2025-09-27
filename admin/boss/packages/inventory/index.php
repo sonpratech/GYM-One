@@ -374,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                         <div class="col-sm-6">
                             <img src="../../../../assets/img/partner/goupcapi.svg" class="img img-fluid" alt="GoUpCPartner-GymOne-DontRemove">
                             <h1 class="lead"><?php echo $translations["partner_goupcapi_information"]; ?></h1>
-                            <a href="https://go-upc.com/" target="_blank" class="btn btn-secondary"><?php echo $translations["partner_otherbtn"]; ?></a>
+                            <a href="https://go-upc.com/" target="_blank" class="btn btn-secondary"><i class="bi bi-info-circle"></i> <?php echo $translations["partner_otherbtn"]; ?></a>
                         </div>
                     </div>
                 </div>
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 <form method="POST" class="mt-4">
                     <div class="input-group">
                         <input type="text" name="barcode" class="form-control" placeholder="<?php echo $translations["product-barcode"]; ?>" required>
-                        <button type="submit" class="btn btn-primary"><?php echo $translations["search"]; ?></button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> <?php echo $translations["search"]; ?></button>
                     </div>
                 </form>
 
@@ -416,7 +416,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                                         <div class="form-group">
                                             <input type="number" name="new_stock" class="form-control" value="<?php echo $row['stock']; ?>" required>
                                         </div>
-                                        <button type="submit" class="btn btn-warning"><?php echo $translations["save"]; ?></button>
+                                        <button type="submit" class="btn btn-warning"><i class="bi bi-box-arrow-down"></i> <?php echo $translations["save"]; ?></button>
                                     </form>
 
                                 </td>
@@ -451,6 +451,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     ?>
     <!-- SCRIPTS! -->
     <script>
+        function requestCameraAccessAndStartScanner() {
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                })
+                .then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    startBarcodeScanner();
+                })
+                .catch(function(err) {
+                    console.error("Camera permission denied or error occurred:", err);
+                    alert("A kamera használatához engedély szükséges.");
+                });
+        }
+
         function startBarcodeScanner() {
             Quagga.init({
                 inputStream: {
@@ -473,7 +489,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             }, function(err) {
                 if (err) {
                     console.error("The Quagga could not start:", err);
-                    alert("An error occurred while starting the camera.");
+                    alert("Hiba történt a kamera indításakor.");
                     return;
                 }
                 Quagga.start();
@@ -499,13 +515,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         }
 
         window.onload = function() {
-            startBarcodeScanner();
+            requestCameraAccessAndStartScanner();
         };
+
         window.addEventListener('resize', function() {
             Quagga.stop();
-            startBarcodeScanner();
+            requestCameraAccessAndStartScanner();
         });
     </script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </body>
 

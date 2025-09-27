@@ -336,8 +336,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="barcode" class="form-label"><?php echo $translations["product-barcode"]; ?>:</label>
                         <input type="number" id="barcode" name="barcode" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"><?php echo $translations["add"]; ?></button>
-                    <a href="../" class="btn btn-secondary"><?php echo $translations["not-yet"]; ?></a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-down"></i> <?php echo $translations["add"]; ?></button>
+                    <a href="../" class="btn btn-secondary"><i class="bi bi-box-arrow-left"></i> <?php echo $translations["not-yet"]; ?></a>
                 </form>
             </div>
         </div>

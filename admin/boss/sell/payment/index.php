@@ -190,16 +190,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $userid = $tickerbuyerid;
+
+    $translatedPaymentMethod = '';
+
     if ($paymentMethod == 'cash') {
-        $paymentMethod = $translations["cash"];
+        $translatedPaymentMethod = $translations["cash"];
     } elseif ($paymentMethod == 'card') {
-        $paymentMethod = $translations["card"];
+        $translatedPaymentMethod = $translations["card"];
     } elseif ($paymentMethod == 'profile') {
         $sql = "UPDATE users SET profile_balance = profile_balance - ? WHERE userid = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("di", $ticketprice, $tickerbuyerid);
         $stmt->execute();
-        $paymentMethod = $translations["profilebalancepay"];
+        $translatedPaymentMethod = $translations["profilebalancepay"];
     }
 
     $invoiceNumber = bin2hex(random_bytes(8));
@@ -298,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <tr>
                         <td>$workerfirstname $workerlastname</td>
                         <td>" .
-        ($method == 'profile' ? $translations["profilebalancepay"] : ($paymentMethod == 'cash' ? $translations["cash"] : $translations["card"])) .
+        ($method == 'profile' ? $translations["profilebalancepay"] : ($method == 'cash' ? $translations["cash"] : $translations["card"])) .
         "</td>
                         <td>$date</td>
                     </tr>
@@ -377,15 +380,249 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         $alerts_html .= '<div class="alert alert-success" role="alert">
-                            ' . $translations["ticketadded"] . '
-                        </div>';
-        $action = $translations['log_ticketbuy'] . ' ID: ' . $tickerbuyerid . ' - ' . $ticketname . ' - ' . $paymentMethod . ' - ' . $userid . '-' . $invoiceNumber . '.pdf';
+                        ' . $translations["ticketadded"] . '
+                    </div>';
+
+        $action = $translations['log_ticketbuy'] . ' ID: ' . $tickerbuyerid . ' - ' . $ticketname . ' - ' . $translatedPaymentMethod . ' - ' . $userid . '-' . $invoiceNumber . '.pdf';
         $actioncolor = 'success';
         $sql = "INSERT INTO logs (userid, action, actioncolor, time) VALUES (?, ?, ?, NOW())";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iss", $logid, $action, $actioncolor);
         $stmt->execute();
+
+        $purchase_date_new = new DateTime("now");
+
+        $purchase_date_formatted = $purchase_date_new->format('Y-m-d H:i:s');
+
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'];
+        $domain_url = $protocol . $host;
+
+        $transport = (new Swift_SmtpTransport($smtp_host, $smtp_port, $smtp_encryption))
+            ->setUsername($smtp_username)
+            ->setPassword($smtp_password);
+
+        $mailer = new Swift_Mailer($transport);
+        $PayEmailHero_PLACEHOLDER = str_replace("{first_name}", $firstname, $translations["payemailhero"]);
+        $PayEmailFooterWhy_PLACEHOLDER = str_replace("{business_name}", $business_name, $translations["payemailfooterwhy"]);
+
+        $emailHtml = <<<EOD
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Confirmation</title>
+    <style>
+        /* PRIMARY: #0950DC (vibrant blue) ACCENT-DARK: #0742B8 TEXT: #222 MUTED: #6B7280 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        .email-container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .header {
+            padding: 40px 30px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .content {
+            padding: 0 30px 30px;
+        }
+
+        .success-badge {
+            background: #ECFDF5;
+            color: #059669;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            color: #222;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: #6B7280;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        .purchase-details {
+            background: #f8f9fa;
+            border: 1px solid #E5E7EB;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+
+        .details-table {
+            width: 100%;
+        }
+
+        .details-row {
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .details-row:last-child {
+            border-bottom: none;
+        }
+
+        .details-label {
+            color: #6B7280;
+            font-weight: 600;
+            padding: 12px 0;
+            width: 40%;
+        }
+
+        .details-value {
+            color: #222;
+            font-weight: 600;
+            padding: 12px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #0950DC, #0742B8);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(9, 80, 220, 0.3);
+        }
+
+        .cta-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .support-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 32px 0;
+        }
+
+        .support-title {
+            color: #222;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 24px 30px;
+            text-align: center;
+            color: #6B7280;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #0950DC;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td>
+                <div class="email-container">
+                    <div class="header">
+                        <img src="{$domain_url}/assets/img/brand/logo.png" alt="GYM Logo" class="logo">
+                    </div>
+
+                    <div class="content">
+                        <div style="text-align: center;">
+                            <span class="success-badge">✓ {$translations["payemailbadge"]}</span>
+                        </div>
+
+                        <h1 class="hero-title">{$PayEmailHero_PLACEHOLDER}</h1>
+                        <p class="subtitle">{$translations["payemailsubtitle"]}</p>
+
+                        <div class="purchase-details">
+                            <table class="details-table">
+                                <tr class="details-row">
+                                    <td class="details-label">{$translations["buytime"]}:</td>
+                                    <td class="details-value">{$purchase_date_formatted}</td>
+                                </tr>
+                                <tr class="details-row">
+                                    <td class="details-label">{$translations["payemailitem"]}</td>
+                                    <td class="details-value">{$ticketname}</td>
+                                </tr>
+                                <tr class="details-row">
+                                    <td class="details-label">{$translations["payemailamount"]}:</td>
+                                    <td class="details-value">{$ticketprice} {$currency}</td>
+                                </tr>
+                                <tr class="details-row">
+                                    <td class="details-label">{$translations["invoice"]} #:</td>
+                                    <td class="details-value">{$userid}-{$invoiceNumber}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="cta-container">
+                            <a href="{$domain_url}/assets/docs/invoices/{$pathinvoicesql}" class="cta-button">{$translations["payemailcta"]}</a>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <p>{$PayEmailFooterWhy_PLACEHOLDER}</p>
+                        <p style="font-size:10px; color:#D1D5DB; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <span>⚡</span>
+                            <span>Engineered with <span style="color:#ef4444;">♥</span> by <a href="https://gymoneglobal.com" style="color:#0950DC;">GYM One</a></span>
+                            <span>⚡</span>
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
+EOD;
+
+        $recipientEmail = $email;
+        $subject = $translations["payemailsubject"];
+
+        $message = (new Swift_Message($subject))
+            ->setFrom(["{$smtp_username}" => "{$business_name}"])
+            ->setTo([$recipientEmail])
+            ->setBody($emailHtml, 'text/html');
+
+        $mailer->send($message);
+
         header("Location: ../../../dashboard");
     } else {
         echo "Hiba történt: " . $stmt->error;
@@ -640,7 +877,7 @@ $is_new_version_available = version_compare($latest_version, $current_version) >
                         <div class="card">
                             <div class="card-body">
                                 <button type="button" class="btn btn-success mt-3" data-toggle="modal" data-target="#paymentModal">
-                                    <?php echo $translations["paybutton"]; ?>
+                                    <i class="bi bi-wallet2"></i> <?php echo $translations["paybutton"]; ?>
                                 </button>
                             </div>
                         </div>

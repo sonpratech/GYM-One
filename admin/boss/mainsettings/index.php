@@ -110,30 +110,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function handleFileUpload($fileInputName, $targetFileName, $uploadDir)
+function handleFileUpload($fileInputName, $targetFileName, $uploadDir, $submitName)
 {
-    if (isset($_FILES[$fileInputName])) {
+    if (isset($_POST[$submitName]) && isset($_FILES[$fileInputName])) {
         $file_type = strtolower(pathinfo($_FILES[$fileInputName]['name'], PATHINFO_EXTENSION));
         $allowed_types = array('png', 'jpg', 'jpeg');
         if (!in_array($file_type, $allowed_types)) {
-            header("Refresh:2");
+            return;
         }
         if ($_FILES[$fileInputName]['size'] > 4000000) {
-            header("Refresh:2");
+            return;
         }
-        if (empty($errors)) {
-            $file_tmp = $_FILES[$fileInputName]['tmp_name'];
-            $target_file = $uploadDir . $targetFileName;
-            move_uploaded_file($file_tmp, $target_file);
-            header("Refresh:2");
+
+        $file_tmp = $_FILES[$fileInputName]['tmp_name'];
+        $target_file = $uploadDir . $targetFileName;
+
+        if (move_uploaded_file($file_tmp, $target_file)) {
+            header("Refresh:1");
+            exit;
         }
     }
 }
 
 $upload_dir = '../../../assets/img/brand/';
-handleFileUpload('logoFile', 'logo.png', $upload_dir);
-handleFileUpload('backgroundFile', 'background.png', $upload_dir);
-handleFileUpload('faviconFile', 'favicon.png', $upload_dir);
+
+handleFileUpload('logoFile', 'logo.png', $upload_dir, 'uploadLogo');
+handleFileUpload('backgroundFile', 'background.png', $upload_dir, 'uploadBackground');
+handleFileUpload('faviconFile', 'favicon.png', $upload_dir, 'uploadFavicon');
+
 
 $sql = "SELECT is_boss FROM workers WHERE userid = ?";
 $stmt = $conn->prepare($sql);
@@ -405,6 +409,7 @@ $conn->close();
                                                     <option value="ES" <?= ($env_data['LANG_CODE'] ?? '') == 'ES' ? 'selected' : '' ?>><?php echo $translations["ES"]; ?></option>
                                                     <option value="GB" <?= ($env_data['LANG_CODE'] ?? '') == 'GB' ? 'selected' : '' ?>><?php echo $translations["GB"]; ?></option>
                                                     <option value="DE" <?= ($env_data['LANG_CODE'] ?? '') == 'DE' ? 'selected' : '' ?>><?php echo $translations["DE"]; ?></option>
+                                                    <option value="TR" <?= ($env_data['LANG_CODE'] ?? '') == 'TR' ? 'selected' : '' ?>><?php echo $translations["TR"]; ?></option>
 
                                                 </select>
                                             </div>
@@ -486,7 +491,7 @@ $conn->close();
 
                                         </div>
                                         <button type="submit"
-                                            class="btn btn-primary"><?php echo $translations["save"]; ?></button>
+                                            class="btn btn-primary"><i class="bi bi-save"></i> <?php echo $translations["save"]; ?></button>
 
                                     </form>
                                 <?php
@@ -522,7 +527,7 @@ $conn->close();
                                         <div class="row text-center">
                                             <div class="col">
                                                 <img class="img img-fluid" width="150px"
-                                                    src="../../../assets/img/brand/logo.png" alt="Logo Preview">
+                                                    src="../../../assets/img/brand/logo.png?<?php echo filemtime("../../../assets/img/brand/logo.png"); ?>" alt="Logo Preview">
                                             </div>
                                         </div>
                                     </div>
@@ -547,7 +552,7 @@ $conn->close();
                                         <div class="row text-center">
                                             <div class="col">
                                                 <img class="img img-fluid" width="150px"
-                                                    src="../../../assets/img/brand/background.png" alt="Background Preview">
+                                                    src="../../../assets/img/brand/background.png?<?php echo filemtime("../../../assets/img/brand/background.png"); ?>" alt="Background Preview">
                                             </div>
                                         </div>
                                     </div>
@@ -572,7 +577,7 @@ $conn->close();
                                         <div class="row text-center">
                                             <div class="col">
                                                 <img class="img img-fluid" width="150px"
-                                                    src="../../../assets/img/brand/favicon.png" alt="Favicon Preview">
+                                                    src="../../../assets/img/brand/favicon.png?<?php echo filemtime("../../../assets/img/brand/favicon.png"); ?>" alt="Favicon Preview">
                                             </div>
                                         </div>
                                     </div>
