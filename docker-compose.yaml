@@ -1,0 +1,26 @@
+
+services:
+  app:
+    build: .
+    container_name: gymone-app
+    ports:
+      - "8090:80"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: gymone-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: gymone
+      MYSQL_USER: gymone
+      MYSQL_PASSWORD: gymone123
+    ports:
+      - "3307:3306"
+    volumes:
+      - gymonedbdata:/var/lib/mysql
+
+volumes:
+  gymonedbdata:
