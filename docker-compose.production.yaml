@@ -1,0 +1,31 @@
+
+services:
+  app:
+    build: .
+    container_name: gymone-app-demo
+    environment:
+      VIRTUAL_HOST: gym.sonpra.com
+      VIRTUAL_PATH: /
+      LETSENCRYPT_HOST: gym.sonpra.com
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: gymone-mysql-demo
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: gymone
+      MYSQL_USER: gymone
+      MYSQL_PASSWORD: gymone123
+    volumes:
+      - gymonedbdata:/var/lib/mysql
+
+volumes:
+  gymonedbdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/data/gymonedbdata
+      o: bind
