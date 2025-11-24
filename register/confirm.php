@@ -2,8 +2,8 @@
 session_start();
 
 if (!isset($_SESSION['userid'])) {
-    header("Location: ../");
-    exit();
+    // header("Location: ../");
+    // exit();
 }
 
 $userid = $_SESSION['userid'];

@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $userid = rand(pow(10, 9), pow(10, 10) - 1);
+    $userid = rand(pow(10, 6), pow(10, 7) - 1);
 
     if ($autoaccept === "TRUE") {
       $confirmed = 'YES';
